@@ -1,10 +1,10 @@
-begin
-  require 'spec'
-rescue LoadError
-  require 'rubygems' unless ENV['NO_RUBYGEMS']
-  gem 'rspec'
-  require 'spec'
-end
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+require 'spec'
+require 'spec/autorun'
 
-$:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'rack/webauth'
+
+Spec::Runner.configure do |config|
+  
+end
