@@ -6,17 +6,18 @@ require 'lib/rack/webauth/version'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "rack-webauth"
+    gem.name = 'rack-webauth'
     gem.version = Rack::Webauth::VERSION
     gem.summary = %Q{TODO: one-line summary of your gem}
     gem.description = %Q{TODO: longer description of your gem}
-    gem.email = "brianvh@mac.com"
-    gem.homepage = "http://github.com/brianvh/rack-webauth"
-    gem.authors = ["Brian V. Hughes"]
+    gem.email = 'brianvh@mac.com'
+    gem.homepage = 'http://github.com/brianvh/rack-webauth'
+    gem.authors = ['Brian V. Hughes']
+    gem.add_dependency('rack', '>= 1.1.0')
+    gem.add_dependency('nokogiri', '>= 1.4.1')
     gem.add_development_dependency "rspec", ">= 1.2.9"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
-  Jeweler::GemcutterTasks.new
+  # Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
