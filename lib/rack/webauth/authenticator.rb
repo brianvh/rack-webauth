@@ -11,14 +11,13 @@ require 'user'
 module Rack
   module Webauth
 
-    # The Authenticator class is actual middleware class. It's initialized by the:
+    # The Authenticator class is actual middleware class. It's initialized by the
+    #
     #   use Rack::Webauth
     #
-    # Which call, which returns an instance of Authenticator to the middleware stack.
-    # When Rack::Webauth is called, in the chain, the call method comes to this class.
+    # method call, which places an Authenticator instance into the middleware stack.
     #
-    # You can also send Configuration commands to Rack::Webauth, by passing a block to
-    # the "use" helper:
+    # You can also send Configuration commands by passing a block to the "use" helper:
     #
     #   use Rack::Webauth do
     #     set_application 'My Cool Rack App'
