@@ -11,16 +11,53 @@ require 'user'
 module Rack
   module Webauth
 
+    # The Authenticator class is actual middleware class. It's initialized by the:
+    #   use Rack::Webauth
+    #
+    # Which call, which returns an instance of Authenticator to the middleware stack.
+    # When Rack::Webauth is called, in the chain, the call method comes to this class.
+    #
+    # You can also send Configuration commands to Rack::Webauth, by passing a block to
+    # the "use" helper:
+    #
+    #   use Rack::Webauth do
+    #     set_application 'My Cool Rack App'
+    #     set_url 'http://mycoolrackapp.com/'
+    #   end
+    #
     class Authenticator
       attr_reader :request, :session, :ticket
 
-      def initialize(env)
+      # We cache the app that we will use to call down the stack. We also setup our
+      # Configuration class, with any options passed into the block in the use helper.
+      def initialize(app, &options)
+        @app = app
+        Rack::Webauth::Configuration.options(&options)
+      end
+      
+      # First we setup our reader attributes, which are used by the rest of the methods.
+      # Then we check for a ticket in the inbound request. If it's present, we branch off
+      # to complete the authentication process.
+      #
+      # If not, we send the request down through the rest of the stack, to the application,
+      # catching the response, coming back up the chain. We then hand that response off for
+      # post processing.
+      def call(env)
         @request = Rack::Request.new(env)
         raise "Rack::Webauth requires Rack::Session." if env["rack.session"].nil?
         @session = request.session[:webauth] ||= {}
         @ticket = request.params['ticket']
+        if ticket?
+          complete
+        else
+          status, headers, body = @app.call(env)
+          process(status, headers, body)
+        end
       end
 
+      private
+
+      # Is there a ticket in the request?
       def ticket?
         !ticket.nil?
       end
@@ -60,8 +97,10 @@ module Rack
         end
       end
 
-      private
-
+      # Here we handle the login process, when the correct session value is set, or the
+      # outbound response has a 401 status. We either redirect to the Webauth login URL,
+      # or to a local login page, if that's been configured. If we are coming from the local
+      # page, redirect to the Webauth login URL.
       def process_login
         set_return_url
         unset(:login)
@@ -77,6 +116,9 @@ module Rack
         redirect_to(location_url)
       end
       
+      # Handling the logout process is nearly identical to the login process, including
+      # specifing a local logout page. The only difference is we delete the :webauth
+      # session object, before we redirect to the Webauth logout URL.
       def process_logout
         location_url = config.logout_url
         case true # look for local_logout settings
@@ -91,36 +133,45 @@ module Rack
         redirect_to(location_url)
       end
 
+      # Helper method for generating the local login/logout URL
       def local_url(login_logout)
         "#{request.scheme}://#{request.host}#{config.send('local_' + login_logout)}"
       end
 
-      def set(id, val)
-        session[id.to_sym] = val
+      # Set a key/value pair into our session sub-hash
+      def set(key, val)
+        session[key.to_sym] = val
       end
 
-      def set?(id)
-        !session[id.to_sym].nil?
-      end
-      
-      def unset(id)
-        session.delete(id.to_sym)
+      # Is this key currently set in our session sub-hash
+      def set?(key)
+        !session[key.to_sym].nil?
       end
 
-      def return_url
-        session[:return_url]
+      # Remove this key from our session sub-hash
+      def unset(key)
+        session.delete(key.to_sym)
       end
-      
+
+      # Custom setter for the URL that we return to, after going through the Webauth
+      # login step. We don't cache the URL of the local login page.
       def set_return_url
         unless (set?(:return_url) and set?(:local_login))
           session[:return_url] = clean_request_url
         end
       end
-      
+
+      # Custom getter for the cached return URL
+      def return_url
+        session[:return_url]
+      end
+
+      # Helper method for building a redirect response
       def redirect_to(location)
         [ 302, {'Location' => location}, ['']]
       end
-      
+
+      # Helper method for building a 500 Error response.
       def error_500(msg="")
         [
           500,
@@ -130,14 +181,15 @@ module Rack
         ]
       end
 
+      # Helper method for accssing our app's configuration
       def config
         Rack::Webauth::Configuration.options
       end
 
+      # Helper method for returning the request URL with any ticket parameter removed
       def clean_request_url
         @clean_request_url ||= request.url.sub(/[\?&]ticket=[^\?&]+/, '')
       end
-
     end
 
   end
