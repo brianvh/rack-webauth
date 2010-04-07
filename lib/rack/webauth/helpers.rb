@@ -8,7 +8,7 @@ module Rack
     module Helpers
 
       def login_required
-        if webauth_user.nil?
+        if !logged_in?
           @request.session[:webauth][:login] = true
         end
       end
