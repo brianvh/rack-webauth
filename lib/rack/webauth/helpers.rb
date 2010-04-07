@@ -9,26 +9,26 @@ module Rack
 
       def login_required
         if !logged_in?
-          @request.session[:webauth][:login] = true
+          webauth[:login] = true
         end
       end
 
       def logged_in?
-        !webauth_user.nil?
+        !webauth[:user].nil?
       end
 
       def login!
-        @request.session[:webauth][:login] = true
+        webauth[:login] = true
       end
 
       def logout!
-        @request.session[:webauth][:logout] = true
+        webauth[:logout] = true
       end
 
       private
 
-      def webauth_user
-        @request.session[:webauth][:user]
+      def webauth
+        self.respond_to?(:session) ? session[:webauth] : @request.session[:webauth]
       end
 
     end
