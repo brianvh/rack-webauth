@@ -11,12 +11,12 @@ end
 helpers Rack::Webauth::Helpers
 
 get '/' do
-  session.inspect
+  Rack::Utils.escape_html(session.inspect)
 end
 
 get '/blocked' do
   login_required
-  session[:webauth].inspect
+  Rack::Utils.escape_html(session[:webauth].inspect)
 end
 
 get '/login' do
