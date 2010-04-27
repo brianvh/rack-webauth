@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian V. Hughes"]
   s.date = %q{2010-04-27}
-  s.description = %q{TODO: longer description of your gem}
+  s.description = %q{Rack middleware for Webauth authentication. Works with rack, sinatra and rails applications.}
   s.email = %q{brianvh@mac.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -82,6 +82,7 @@ Gem::Specification.new do |s|
      "lib/rack/webauth/ticket.rb",
      "lib/rack/webauth/user.rb",
      "lib/rack/webauth/version.rb",
+     "rack-webauth.gemspec",
      "script/console",
      "script/destroy",
      "script/generate",
@@ -94,7 +95,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.6}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{Rack middleware for Webauth authentication.}
   s.test_files = [
     "spec/authenticator_spec.rb",
      "spec/spec_helper.rb",
