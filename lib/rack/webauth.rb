@@ -11,11 +11,6 @@ module Rack
     autoload :User, 'webauth/user'
     autoload :Helpers, 'webauth/helpers'
 
-    # module Helpers
-    #   autoload :Rails, 'webauth/helpers/rails'
-    #   autoload :Sintra, 'webauth/helpers/sinatra'
-    # end
-
     # This is a convenience method on our main module. The Authenticator class is the
     # actual driver for our middleware, but we want to provide an API that allows for:
     #
