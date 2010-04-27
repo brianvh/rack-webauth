@@ -13,7 +13,7 @@ begin
     gem.email = 'brianvh@mac.com'
     gem.homepage = 'http://github.com/brianvh/rack-webauth'
     gem.authors = ['Brian V. Hughes']
-    gem.add_dependency('rack', '>= 1.1.0')
+    gem.add_dependency('rack', '>= 1.0.1')
     gem.add_dependency('nokogiri', '>= 1.4.1')
     gem.add_development_dependency "rspec", ">= 1.2.9"
   end
