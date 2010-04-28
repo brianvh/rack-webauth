@@ -25,6 +25,10 @@ module Rack
         webauth[:logout] = true
       end
 
+      def webauth_user
+        webauth[:user]
+      end
+
       private
 
       def webauth
