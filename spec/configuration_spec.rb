@@ -5,6 +5,7 @@ describe Rack::Webauth::Configuration do
   describe "-- working with the Base class" do
     before(:each) do
       @config = Rack::Webauth::Configuration::Base.new()
+      @url = "http://example.com/"
     end
 
     it "should be a Base class object" do
@@ -12,9 +13,8 @@ describe Rack::Webauth::Configuration do
     end
 
     it "should set the URL attribute" do
-      url = "http://example.com/"
-      @config.set_url url
-      @config.url.should == url
+      @config.set_url @url
+      @config.url.should == @url
     end
 
     it "should raise an error on a bad set_ attribute" do
