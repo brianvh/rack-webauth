@@ -9,7 +9,12 @@ module Rack ; module Webauth
 
     describe "basic operation" do
       
-      it "should return a normal response from a standard call" do
+      it "should raise an error without rack.session" do
+        env = Rack::MockRequest.env_for("/")
+        lambda { @auth.call(env) }.should raise_error
+      end
+
+      it "should return a normal response for a standard call" do
         env = Rack::MockRequest.env_for("/", 'rack.session' => {})
         response = Rack::MockResponse.new(*@auth.call(env))
         response.status.should == 200
