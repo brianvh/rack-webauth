@@ -5,16 +5,26 @@ describe Rack::Webauth::Configuration do
   describe "-- working with the Base class" do
     before(:each) do
       @config = Rack::Webauth::Configuration::Base.new()
+      @url = "http://example.com/"
+      @config.set_url @url
+      @app = "My_Rack_Application"
+      @config.set_application @app
     end
 
     it "should be a Base class object" do
       @config.should be_instance_of(Rack::Webauth::Configuration::Base)
     end
 
-    it "should set the URL attribute" do
-      url = "http://example.com/"
-      @config.set_url url
-      @config.url.should == url
+    it "should return the correct application URL" do
+      @config.url.should == @url
+    end
+
+    it "should return the correct login URL" do
+      @config.login_url(@url).should match(/#{@config.escape(@url)}/)
+    end
+
+    it "should return the correct logout URL" do
+      @config.logout_url.should match(/#{@app}/)
     end
 
     it "should raise an error on a bad set_ attribute" do
