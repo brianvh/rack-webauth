@@ -21,6 +21,10 @@ describe Rack::Webauth::Configuration do
       @config.login_url(@url).should match(/#{@config.escape(@url)}/)
     end
 
+    it "should return the correct logout URL" do
+      @config.logout_url.should match(/My\+Rack\+Application/)
+    end
+
     it "should raise an error on a bad set_ attribute" do
       lambda { @config.set_foo("bar") }.should raise_error(/Undefined setter/)
     end
