@@ -43,7 +43,6 @@ module Rack
       # post processing.
       def call(env)
         @request = Rack::Request.new(env)
-        raise "Rack::Webauth requires Rack::Session." if env["rack.session"].nil?
         @session = request.session[:webauth] ||= {}
         @ticket = request.params['ticket']
         if ticket?

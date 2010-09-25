@@ -9,10 +9,12 @@ module Rack ; module Webauth
   class Session
     attr_reader :session
 
-    def initialize(request)
-      @session = request.session[:webauth] ||= {}
+    def initialize(env)
+      raise "Rack::Webauth requires Rack::Session." if env["rack.session"].nil?
+      @session = env['rack.session'][:webauth] ||= {}
     end
 
   end
 
 end ; end
+
