@@ -1,0 +1,15 @@
+<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
+  <cas:authenticationSuccess>
+    <cas:user>Throckmorton P. Scribblemonger@DARTMOUTH.EDU</cas:user>
+    <cas:attribute name="did" value="HDZ50097"/>
+    <cas:did>HDZ50097</cas:did>
+    <cas:attribute name="authType" value="USERPASS"/>
+    <cas:authType>USERPASS</cas:authType>
+    <cas:attribute name="uid" value="58789"/>
+    <cas:uid>58789</cas:uid>
+    <cas:attribute name="name" value="Throckmorton P. Scribblemonger"/>
+    <cas:name>Throckmorton P. Scribblemonger</cas:name>
+    <cas:attribute name="affil" value="SPON"/>
+    <cas:affil>SPON</cas:affil>
+  </cas:authenticationSuccess>
+</cas:serviceResponse>
