@@ -12,7 +12,7 @@ module Rack ; module Webauth
     class << self
       def parse(xml_text)
         xml = super clean_xml(xml_text)
-        if xml.valid?
+        if xml.good_response?
           xml.auth_success? ? xml.gather_attributes : xml.auth_error
         else
           xml.invalid
@@ -26,6 +26,10 @@ module Rack ; module Webauth
     end
 
     def valid?
+      errors.empty?
+    end
+
+    def good_response?
       root.name == 'serviceResponse'
     end
 
@@ -39,6 +43,15 @@ module Rack ; module Webauth
         next unless child.attributes == {} # we only want the standard elements and their content
         @attributes[child.name.downcase.to_sym] = child.content
       end
+    end
+
+    def invalid
+      errors << 'The supplied XML is not from a Webauth server.'
+    end
+
+    def auth_error
+      node = root.child
+      errors << "#{node.attributes["code"]}: #{node.attributes["code"]}"
     end
 
   end
