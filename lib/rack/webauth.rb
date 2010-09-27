@@ -7,7 +7,7 @@ module Rack
     autoload :Authenticator, 'webauth/authenticator'
     autoload :Configuration, 'webauth/configuration'
     autoload :Session, 'webauth/session'
-    autoload :Ticket, 'webauth/ticket'
+    autoload :Request, 'webauth/request'
     autoload :Response, 'webauth/response'
     autoload :User, 'webauth/user'
     autoload :Helpers, 'webauth/helpers'

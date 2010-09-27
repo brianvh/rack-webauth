@@ -4,7 +4,8 @@ describe Rack::Webauth::Authenticator do
 
   before(:each) do
     @auth = Rack::Webauth::Authenticator.new(app)
-    Rack::Webauth::Configuration.options {set_url 'http://example.org/'}
+    @url = 'http://example.org/'
+    Rack::Webauth::Configuration.options {|config| config.set_url @url}
   end
 
   describe "-- basic operation" do
@@ -48,14 +49,14 @@ describe Rack::Webauth::Authenticator do
         env = Rack::MockRequest.env_for("/", 'rack.session' => {:webauth => {:login => 1}})
         response = Rack::MockResponse.new(*@auth.call(env))
         response.status.should == 302
-        response.headers['location'].should == "http://example.org#{@login_path}"
+        response.headers['location'].should == @url.gsub(/\/$/, '') + @login_path
       end
 
       it "should redirect to the logout path, when logut is requested" do
         env = Rack::MockRequest.env_for("/", 'rack.session' => {:webauth => {:logout => 1}})
         response = Rack::MockResponse.new(*@auth.call(env))
         response.status.should == 302
-        response.headers['location'].should == "http://example.org#{@logout_path}"
+        response.headers['location'].should == @url.gsub(/\/$/, '') + @logout_path
       end
     end
   end
@@ -63,9 +64,7 @@ describe Rack::Webauth::Authenticator do
   describe "-- login with a valid ticket" do
     before(:each) do
       ticket = 'fake-webauth-ticket'
-      @user = 'Joe User'
-      @uid = 1234
-      webauth_valid_ticket_for(ticket, @user, @uid)
+      webauth_valid_ticket_for(ticket, 'Joe User', 1234)
       @env = Rack::MockRequest.env_for("/?ticket=#{ticket}", 'rack.session' => {})
       @response = Rack::MockResponse.new(*@auth.call(@env))
     end
@@ -75,25 +74,11 @@ describe Rack::Webauth::Authenticator do
     end
 
     it "should redirect to the application's URL" do
-      @response.headers['location'].should == 'http://example.org/'
+      @response.headers['location'].should == @url
     end
 
-    describe "-- in the resulting session" do
-      before(:each) do
-        @request = Rack::Request.new(@env)
-      end
-
-      it "should have the correct user class" do
-        @request.session[:webauth][:user].should be_instance_of(Rack::Webauth::User)
-      end
-
-      it "should have the correct user name" do
-        @request.session[:webauth][:user].name == @user
-      end
-
-      it "should have the correct user uid" do
-        @request.session[:webauth][:user].uid == @uid
-      end
+    it "should have a :user entry in the :weauth session sub-hash" do
+      @env['rack.session'][:webauth][:user].should_not be_nil
     end
   end
 
