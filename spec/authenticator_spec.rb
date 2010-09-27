@@ -33,6 +33,31 @@ describe Rack::Webauth::Authenticator do
       response.status.should == 302
       response.headers['location'].should match(/login\.dartmouth\.edu\/logout\.php/)
     end
+
+    describe "-- with local login and logout pages" do
+      before(:each) do
+        @login_path = '/login'
+        @logout_path = '/logout'
+        Rack::Webauth::Configuration.options do |config|
+          config.set_local_login @login_path
+          config.set_local_logout @logout_path
+        end
+      end
+
+      it "should redirect to the login path, when login is requested" do
+        env = Rack::MockRequest.env_for("/", 'rack.session' => {:webauth => {:login => 1}})
+        response = Rack::MockResponse.new(*@auth.call(env))
+        response.status.should == 302
+        response.headers['location'].should == "http://example.org#{@login_path}"
+      end
+
+      it "should redirect to the logout path, when logut is requested" do
+        env = Rack::MockRequest.env_for("/", 'rack.session' => {:webauth => {:logout => 1}})
+        response = Rack::MockResponse.new(*@auth.call(env))
+        response.status.should == 302
+        response.headers['location'].should == "http://example.org#{@logout_path}"
+      end
+    end
   end
 
   describe "-- login with a valid ticket" do
@@ -96,10 +121,10 @@ describe Rack::Webauth::Authenticator do
         when '/'
           [200, { "Content-Type" => "text/plain" }, [request.session.inspect]]
         when '/login'
-          env['rack.session'][:webauth][:login] = true
+          env['rack.session'][:webauth][:login] = 1
           [200, { "Content-Type" => "text/plain" }, [request.session.inspect]]
         when '/logout'
-          env['rack.session'][:webauth][:logout] = true
+          env['rack.session'][:webauth][:logout] = 1
           [200, { "Content-Type" => "text/plain" }, [request.session.inspect]]
       end
     end
