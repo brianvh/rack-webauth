@@ -13,7 +13,7 @@ def webauth_valid_ticket_for(ticket, name, uid)
 end
 
 def webauth_invalid_ticket(ticket)
-  xml_text = File.read("spec/support/webauth_badticket.xml")
+  xml_text = File.read("spec/support/webauth_failed_payload.xml")
   webauth_setup_url(ticket, xml_text)
 end
 

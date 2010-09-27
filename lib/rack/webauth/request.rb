@@ -6,7 +6,7 @@ require 'rubygems'
 require 'rack/utils'
 require 'rack/request'
 
-require 'response'
+require 'xml'
 
 module Rack ; module Webauth
 
@@ -41,7 +41,7 @@ module Rack ; module Webauth
         http = Net::HTTP.new(config.server_host, config.server_port)
         http.use_ssl = true if config.server_port == 443
         response = http.get(auth_validate_path)
-        @payload = Response.parse_xml(response.body)
+        @payload = XML.parse(response.body)
         payload.valid?
       else
         false
@@ -51,7 +51,7 @@ module Rack ; module Webauth
     # Run our authenticate method, but raise an error if the payload isn't valid.
     def authenticate!
       auth_needed? or raise "Authentication not needed for this request."
-      authenticate or raise payload.error
+      authenticate or raise payload.errors.last
     end
 
     # Is our parsed payload valid?

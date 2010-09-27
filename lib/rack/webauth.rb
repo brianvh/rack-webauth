@@ -8,7 +8,7 @@ module Rack
     autoload :Configuration, 'webauth/configuration'
     autoload :Session, 'webauth/session'
     autoload :Request, 'webauth/request'
-    autoload :Response, 'webauth/response'
+    autoload :XML, 'webauth/xml'
     autoload :User, 'webauth/user'
     autoload :Helpers, 'webauth/helpers'
 
