@@ -9,20 +9,14 @@ module Rack ; module Webauth
   class XML < Nokogiri::XML::Document
     attr_reader :attributes
 
-    class << self
-      def parse(xml_text)
-        xml = super clean_xml(xml_text)
-        if xml.good_response?
-          xml.auth_success? ? xml.gather_attributes : xml.auth_error
-        else
-          xml.invalid
-        end
-        xml
+    def self.parse(xml_text)
+      xml = super xml_text.gsub(/^[\t ]*/, '').gsub(/\n/, '')
+      if xml.good_response?
+        xml.auth_success? ? xml.gather_attributes : xml.auth_error
+      else
+        xml.invalid
       end
-
-      def clean_xml(xml_text)
-        xml_text.gsub(/^[\t ]*/, '').gsub(/\n/, '')
-      end
+      xml
     end
 
     def valid?
