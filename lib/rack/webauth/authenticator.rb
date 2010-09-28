@@ -62,7 +62,7 @@ module Rack ; module Webauth
         session.user = User.new(request.payload.attributes)
         redirect_to(request.clean_url)
       else
-        error_500(request.payload.error)
+        error_500(request.payload.errors.last)
       end
     end
 
