@@ -5,4 +5,5 @@
 <body>
   <h1>Login Test</h1>
   <%= button_to "Log In", session_path, :method => :post %></body>
+  <pre><%=h session[:webauth].inspect %></pre>
 </html>

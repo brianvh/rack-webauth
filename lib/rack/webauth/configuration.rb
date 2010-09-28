@@ -7,61 +7,65 @@ require 'rack/utils'
 
 module Rack
   module Webauth
+    module Configuration
 
-    class Configuration
+      class Base
 
-      include Singleton
+        attr_reader :server_host, :server_port, :server_login, :server_logout, :server_validate
+        attr_reader :application, :url, :local_login, :local_logout
 
-      attr_reader :server_host, :server_port, :server_login, :server_logout, :server_validate
-      attr_reader :application, :url, :local_login, :local_logout
+        def initialize
+          @server_host = 'login.dartmouth.edu'
+          @server_port = 443
+          @server_login = '/cas/login'
+          @server_logout = '/logout.php'
+          @server_validate = '/cas/serviceValidate'
+          @application = 'My Rack Application'
+          @url = @local_login = @local_logout = nil
+        end
 
-      def initialize
-        @server_host = 'login.dartmouth.edu'
-        @server_port = 443
-        @server_login = '/cas/login'
-        @server_logout = '/logout.php'
-        @server_validate = '/cas/serviceValidate'
-        @application = 'My Rack Application'
-        @url = @local_login = @local_logout = nil
-      end
+        def login_url(return_url)
+          "https://#{server_host}#{server_login}?service=#{escape(return_url)}"
+        end
 
-      def login_url(return_url)
-        "https://#{server_host}#{server_login}?service=#{escape(return_url)}"
-      end
+        def logout_url
+          "https://#{server_host}#{server_logout}?app=#{escape(application)}&url=#{escape(url)}"
+        end
 
-      def logout_url
-        "https://#{server_host}#{server_logout}?app=#{escape(application)}&url=#{escape(url)}"
-      end
+        def escape(val)
+          Rack::Utils.escape(val)
+        end
+
+        private
+
+        # Handle all of the "set_" method calls, for setting our configuration instance variables
+        def method_missing(setter, value)
+          case setter.to_s
+            when /^set_(.+)/
+              variable_name = "@#{$1}"
+              if instance_variable_defined?(variable_name)
+                instance_variable_set(variable_name, value)
+              else
+                raise NoMethodError.new("Undefined setter '#{setter.to_s}' for #{self.class}.")
+              end
+          else
+            super
+          end
+        end
+      end # Base
 
       def self.options(&block)
-        config = Configuration.instance
+        config = Single.instance
         if block_given?
           block.arity < 1 ? config.instance_eval(&block) : block.call(config)
         end
         config
       end
 
-      private
+      class Single < Base
+        include Singleton
+      end
 
-        def escape(val)
-          Rack::Utils.escape(val)
-        end
-
-        # Handle all of the "set_" method calls, for setting our configuration instance variables
-        def method_missing(setter, value)
-          case setter.to_s
-          when /^set_(.+)/
-            variable_name = "@#{$1}"
-            if instance_variable_defined?(variable_name)
-              instance_variable_set(variable_name, value)
-            else
-              raise NoMethodError.new("Undefined setter '#{setter.to_s}' for #{self.class}.")
-            end
-          else
-            super
-          end
-        end
     end
-
   end
 end
