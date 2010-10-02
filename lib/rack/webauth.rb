@@ -1,6 +1,8 @@
 $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
+require 'webauth/user'
+
 module Rack
   module Webauth
 
@@ -9,7 +11,6 @@ module Rack
     autoload :Session, 'webauth/session'
     autoload :Request, 'webauth/request'
     autoload :XML, 'webauth/xml'
-    autoload :User, 'webauth/user'
     autoload :Helpers, 'webauth/helpers'
 
     # This is a convenience method on our main module. The Authenticator class is the
