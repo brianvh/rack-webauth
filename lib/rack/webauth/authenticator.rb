@@ -39,8 +39,8 @@ module Rack ; module Webauth
     # catching the response, coming back up the chain. We then hand that response off for
     # post processing.
     def call(env)
-      @session = Session.new(env)
-      @request = Request.new(env, config)
+      @session = Rack::Webauth::Session.new(env)
+      @request = Rack::Webauth::Request.new(env, config)
       if request.auth_needed?
         complete
       else
@@ -59,7 +59,7 @@ module Rack ; module Webauth
       session.clear(:return)
       session.clear(:login)
       if request.authenticate
-        session.user = User.new(request.payload.attributes)
+        session.user = Rack::Webauth::User.new(request.payload.attributes)
         redirect_to(request.clean_url)
       else
         error_500(request.payload.errors.last)
