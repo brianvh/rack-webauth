@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rack-webauth}
-  s.version = "0.8.0"
+  s.version = "0.8.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian V. Hughes"]
-  s.date = %q{2010-09-28}
+  s.date = %q{2010-10-02}
   s.description = %q{Rack middleware for Webauth authentication. Works with rack, sinatra and rails applications.}
   s.email = %q{brianvh@mac.com}
   s.extra_rdoc_files = [
